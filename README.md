@@ -109,6 +109,35 @@ app.use(function (err, req, res, next) {
 });
 ```
 
+### Cross account usage
+
+If your application runs a different account from permissions, you can use this code
+
+```js
+const parmissionClient = require('node-permissions-client');
+const AWS = require('aws-sdk');
+
+const chain = new AWS.CredentialProviderChain();
+chain.providers = [
+	// use a profile for local development
+	new AWS.SharedIniFileCredentials({ profile: 'permission' }),
+	// and STS Assume Role for your instances
+	new AWS.TemporaryCredentials({ RoleArn: 'arn:...' })
+];
+
+const permissions = client({
+	app: 'application',
+	s3Bucket: 'bucket',
+	s3BucketPrefix: 'STAGE',
+	s3PermissionsFile: 'permissions.json',
+	s3Client: new AWS.S3({
+		credentials: null,
+		region: 'eu-west-1',
+		credentialProvider: chain
+	})
+});
+```
+
 # Contributing
 
 ## Local development
