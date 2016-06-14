@@ -32,9 +32,9 @@ function createMiddleware (config, updateInterval, logger) {
 
 	function middlewareCreator (permission) {
 		return (req, res, next) => {
-			const email = req.guUser;
+			const email = req.guUser ? req.guUser.email : '';
 			if (!email) {
-				const message = 'Missing guUser is request object. Is your middleware authenticated?';
+				const message = 'Missing guUser in request object. Is your middleware authenticated?';
 				logger.warn(message);
 				if (CALL_NEXT) {
 					next(new Unauthorized(message));

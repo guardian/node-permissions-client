@@ -110,7 +110,7 @@ tap.test('calls next with error when permission is false', function (test) {
 	const middleware = middlewareCreator('one');
 
 	setTimeout(() => {
-		middleware({ guUser: 'person@email.com' }, null, (err) => {
+		middleware({ guUser: { email: 'person@email.com' }}, null, (err) => {
 			middlewareCreator.dispose();
 			test.type(err, permissionClient.Unauthorized);
 			test.match(err.message, /not authorized/i);
@@ -191,7 +191,7 @@ tap.test('sends status when permission is false', function (test) {
 	const middleware = middlewareCreator('one');
 
 	setTimeout(() => {
-		middleware({ guUser: 'person@email.com' }, {
+		middleware({ guUser: { email: 'person@email.com' }}, {
 			sendStatus (status) {
 				middlewareCreator.dispose();
 				test.equal(status, 403, 'error status');
@@ -228,7 +228,7 @@ tap.test('calls next when permission is true', function (test) {
 	const middleware = middlewareCreator('one');
 
 	setTimeout(() => {
-		middleware({ guUser: 'person@email.com' }, null, (error) => {
+		middleware({ guUser: { email: 'person@email.com' }}, null, (error) => {
 			middlewareCreator.dispose();
 			test.equal(error, undefined, 'next error');
 			test.done();
