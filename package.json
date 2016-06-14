@@ -1,7 +1,7 @@
 {
   "name": "node-permissions-client",
   "description": "Node library for the Guardian's permissions service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "main": "src/index.js",
   "engines": {
@@ -13,11 +13,12 @@
     "test": "npm run lint && npm run tap"
   },
   "devDependencies": {
-    "eslint": "^2.10.2",
-    "tap": "^5.7.1"
+    "aws-sdk": "^2.3.19",
+    "eslint": "^2.12.0",
+    "tap": "^5.7.2"
   },
-  "dependencies": {
-    "aws-sdk": "^2.3.13"
+  "peerDependencies": {
+    "aws-sdk": "2.x"
   },
   "files": [
     "src"

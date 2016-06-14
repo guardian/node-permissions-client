@@ -27,7 +27,7 @@ function permissionClient (config) {
 
 function createMiddleware (config, updateInterval, logger) {
 	const CALL_NEXT = config.sendStatus === false;
-	const store = storeCreator(config, AWS.S3, updateInterval);
+	const store = storeCreator(config, AWS.S3, updateInterval, logger);
 	store.install();
 
 	function middlewareCreator (permission) {
@@ -44,6 +44,7 @@ function createMiddleware (config, updateInterval, logger) {
 			} else if (store.value(permission, email)) {
 				next();
 			} else {
+				logger.info('User is not authorized to access permission ' + permission);
 				if (CALL_NEXT) {
 					next(new Unauthorized('User is not authorized'));
 				} else {

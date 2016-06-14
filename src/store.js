@@ -1,7 +1,7 @@
 'use strict';
 const ONE_MINUTE = 60000;
 
-module.exports = function (globalConfig, defaultS3, updateInterval) {
+module.exports = function (globalConfig, defaultS3, updateInterval, logger) {
 	const APPLICATION_NAME = globalConfig.app;
 	const BUCKET = globalConfig.s3Bucket;
 	const OBJECT_KEY = [
@@ -12,7 +12,6 @@ module.exports = function (globalConfig, defaultS3, updateInterval) {
 	const s3 = globalConfig.s3Client || new defaultS3({
 		region: globalConfig.s3Region
 	});
-	const logger = globalConfig.logger || console;
 	/**
 	 * Map the permissions of a given app
 	 * key: permission name
@@ -23,6 +22,7 @@ module.exports = function (globalConfig, defaultS3, updateInterval) {
 
 	function install () {
 		if (!installId) {
+			logger.info('Installing permission client');
 			process.nextTick(() => refresh());
 			installId = setInterval(refresh, updateInterval || ONE_MINUTE);
 		} else {
@@ -36,6 +36,7 @@ module.exports = function (globalConfig, defaultS3, updateInterval) {
 	}
 
 	function refresh () {
+		logger.info('Refreshing permission client');
 		s3.getObject({
 			Bucket: BUCKET,
 			Key: OBJECT_KEY
@@ -65,6 +66,7 @@ module.exports = function (globalConfig, defaultS3, updateInterval) {
 				}
 			});
 			process.nextTick(UPDATE_CALLBACK);
+			logger.info('Permission client refreshed correctly');
 		} catch (ex) {
 			logger.error('Invalid JSON from permission bucket');
 		}

@@ -6,6 +6,7 @@ tap.test('application name is mandatory', function (test) {
 	let messageLogged = false;
 	const middleware = permissionClient({
 		logger: {
+			info () {},
 			error (message) {
 				messageLogged = true;
 				test.match(message, /missing .* parameter/i);
@@ -26,6 +27,7 @@ tap.test('S3 configuration is mandatory', function (test) {
 	const middleware = permissionClient({
 		app: 'any',
 		logger: {
+			info () {},
 			error (message) {
 				messageLogged = true;
 				test.match(message, /S3 configuration/i);
@@ -49,6 +51,7 @@ tap.test('calls next with error when gu email is not set', function (test) {
 		s3BucketPrefix: 'any',
 		s3PermissionsFile: 'any',
 		logger: {
+			info () {},
 			warn (message) {
 				messageLogged = true;
 				test.match(message, /missing guUser/i);
@@ -90,6 +93,7 @@ tap.test('calls next with error when permission is false', function (test) {
 		s3BucketPrefix: 'any',
 		s3PermissionsFile: 'any',
 		logger: {
+			info () {},
 			warn () {}
 		},
 		s3Client: {
@@ -127,6 +131,7 @@ tap.test('sends status when gu email is not set', function (test) {
 		s3BucketPrefix: 'any',
 		s3PermissionsFile: 'any',
 		logger: {
+			info () {},
 			warn (message) {
 				messageLogged = true;
 				test.match(message, /missing guUser/i);
@@ -170,6 +175,7 @@ tap.test('sends status when permission is false', function (test) {
 		s3BucketPrefix: 'any',
 		s3PermissionsFile: 'any',
 		logger: {
+			info () {},
 			warn () {}
 		},
 		s3Client: {
@@ -223,7 +229,8 @@ tap.test('calls next when permission is true', function (test) {
 					}])
 				}));
 			}
-		}
+		},
+		logger: { info () {} }
 	});
 	const middleware = middlewareCreator('one');
 

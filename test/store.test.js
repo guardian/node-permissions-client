@@ -3,10 +3,10 @@ const tap = require('tap');
 const storeCreator = require('../src/store');
 
 tap.test('returns false if permissions are not fetched', function (test) {
+	const logger = { info () {}, error: () => {} };
 	const store = storeCreator({
-		s3Client: {},
-		logger: { error: () => {} }
-	});
+		s3Client: {}
+	}, null, null, logger);
 	test.equal(store.value('any'), false);
 	test.done();
 });
@@ -26,7 +26,7 @@ tap.test('creates the S3 object from config', function (test) {
 				test.done();
 			}
 		}
-	});
+	}, null, null, { info () {} });
 	store.install();
 });
 
@@ -50,7 +50,7 @@ tap.test('uses the region is specified', function (test) {
 				test.done();
 			}
 		};
-	});
+	}, null, { info () {} });
 	store.install();
 });
 
@@ -58,15 +58,15 @@ tap.test('complains if the store is installed twice', function (test) {
 	const store = storeCreator({
 		s3Client: {
 			getObject () {}
-		},
-		logger: {
-			warn (message) {
-				test.match(message, /installed twice/i);
-				process.nextTick(() => {
-					store.uninstall();
-					test.done();
-				});
-			}
+		}
+	}, null, null, {
+		info () {},
+		warn (message) {
+			test.match(message, /installed twice/i);
+			process.nextTick(() => {
+				store.uninstall();
+				test.done();
+			});
 		}
 	});
 	store.install();
@@ -79,17 +79,17 @@ tap.test('logs an error if s3 errors out', function (test) {
 			getObject (obj, cb) {
 				process.nextTick(() => cb(new Error('s3 error')));
 			}
-		},
-		logger: {
-			error (message, ex) {
-				test.match(message, /s3.getobject/i);
-				test.type(ex, Error);
-				test.equal(ex.message, 's3 error');
-				process.nextTick(() => {
-					store.uninstall();
-					test.done();
-				});
-			}
+		}
+	}, null, null, {
+		info () {},
+		error (message, ex) {
+			test.match(message, /s3.getobject/i);
+			test.type(ex, Error);
+			test.equal(ex.message, 's3 error');
+			process.nextTick(() => {
+				store.uninstall();
+				test.done();
+			});
 		}
 	});
 	store.install();
@@ -103,7 +103,7 @@ tap.test('polls the configuration', function (test) {
 				counter += 1;
 			}
 		}
-	}, null, 40);
+	}, null, 40, { info () {} });
 	store.install();
 	setTimeout(() => {
 		// I expect the client to be called immediately, at time 40 and 80
@@ -123,12 +123,12 @@ tap.test('logs an error if the JSON is invalid', function (test) {
 					});
 				});
 			}
-		},
-		logger: {
-			error (message) {
-				test.match(message, /invalid json/i);
-				process.nextTick(() => test.done());
-			}
+		}
+	}, null, null, {
+		info () {},
+		error (message) {
+			test.match(message, /invalid json/i);
+			process.nextTick(() => test.done());
 		}
 	});
 	store.install();
@@ -179,12 +179,12 @@ tap.test('parse the configuration', function (test) {
 			test.equal(store.value('one', 'person.two@email.com'), false, 'active different from default');
 			test.equal(store.value('one', 'missing@email.com'), true, 'default value');
 			test.equal(store.value('not-defined', 'missing@email.com'), false, 'invalid permission');
-		},
-		logger: {
-			error (message) {
-				test.match(message, /permission .*not-defined.* exist/i);
-				process.nextTick(() => test.done());
-			}
+		}
+	}, null, null, {
+		info () {},
+		error (message) {
+			test.match(message, /permission .*not-defined.* exist/i);
+			process.nextTick(() => test.done());
 		}
 	});
 	store.install();
@@ -270,6 +270,6 @@ tap.test('updates the configuration', function (test) {
 				process.nextTick(() => test.done());
 			}
 		}
-	}, null, 30);
+	}, null, 30, { info () {} });
 	store.install();
 });
