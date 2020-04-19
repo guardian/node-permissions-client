@@ -2,7 +2,7 @@ Node library for the Guardian's [permissions service](https://github.com/guardia
 
 # Dependencies
 
-Permissions are applied on a user email, you must include an authentication library such as [panda](https://github.com/guardian/pan-domain-node).
+Permissions are applied on a user email, you must include an authentication library such as [panda](https://github.com/guardian/pan-domain-authentication/#to-verify-login-in-nodejs).
 
 The client requires node 4.3 or newer.
 
